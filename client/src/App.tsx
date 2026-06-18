@@ -19,7 +19,8 @@ type ProjectSnapshot = {
   previewUrl: string;
 };
 
-const examplePrompt = "Update the project to show a pricing section with three plans.";
+const examplePrompt =
+  "Update the project to show a pricing section with three plans.";
 
 export function App() {
   const [prompt, setPrompt] = useState(examplePrompt);
@@ -30,13 +31,21 @@ export function App() {
 
   useEffect(() => {
     refreshProject().catch((caughtError) => {
-      setError(caughtError instanceof Error ? caughtError.message : "Could not load project files.");
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Could not load project files.",
+      );
     });
   }, []);
 
   const selectedFile = useMemo(() => {
     if (!snapshot) return null;
-    return snapshot.files.find((file) => file.path === selectedPath) ?? snapshot.files[0] ?? null;
+    return (
+      snapshot.files.find((file) => file.path === selectedPath) ??
+      snapshot.files[0] ??
+      null
+    );
   }, [snapshot, selectedPath]);
 
   async function refreshProject() {
@@ -48,7 +57,13 @@ export function App() {
     }
 
     setSnapshot(payload);
-    setSelectedPath((currentPath) => payload.files.find((file: ProjectFile) => file.path === currentPath)?.path ?? payload.files[0]?.path ?? "");
+    setSelectedPath(
+      (currentPath) =>
+        payload.files.find((file: ProjectFile) => file.path === currentPath)
+          ?.path ??
+        payload.files[0]?.path ??
+        "",
+    );
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -62,7 +77,7 @@ export function App() {
       const response = await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: prompt })
+        body: JSON.stringify({ message: prompt }),
       });
       const payload = await response.json();
 
@@ -71,10 +86,19 @@ export function App() {
       }
 
       setSnapshot(payload);
-      setSelectedPath(payload.files.find((file: ProjectFile) => file.path === selectedPath)?.path ?? payload.files[0]?.path ?? "");
+      setSelectedPath(
+        payload.files.find((file: ProjectFile) => file.path === selectedPath)
+          ?.path ??
+          payload.files[0]?.path ??
+          "",
+      );
       setPrompt("");
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Something went wrong.");
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Something went wrong.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +111,9 @@ export function App() {
           <p className="eyebrow">Lovable-style builder</p>
           <h1>Assignment Starter</h1>
         </div>
-        <div className="status-pill">{snapshot ? "Project folder loaded" : "Loading project"}</div>
+        <div className="status-pill">
+          {snapshot ? "Project folder loaded" : "Loading project"}
+        </div>
       </section>
 
       <section className="workspace">
@@ -111,13 +137,18 @@ export function App() {
             <h2>Prompt history</h2>
             {snapshot?.messageHistory.length ? (
               snapshot.messageHistory.map((message) => (
-                <article key={`${message.createdAt}-${message.role}`} className={`message ${message.role}`}>
+                <article
+                  key={`${message.createdAt}-${message.role}`}
+                  className={`message ${message.role}`}
+                >
                   <span>{message.role}</span>
                   <p>{message.content}</p>
                 </article>
               ))
             ) : (
-              <p className="muted">Send a request to see the conversation log.</p>
+              <p className="muted">
+                Send a request to see the conversation log.
+              </p>
             )}
           </div>
         </aside>
@@ -148,7 +179,10 @@ export function App() {
           </div>
 
           <pre className="code-view">
-            <code>{selectedFile?.content ?? "Select or generate a file to inspect the code."}</code>
+            <code>
+              {selectedFile?.content ??
+                "Select or generate a file to inspect the code."}
+            </code>
           </pre>
         </section>
 
@@ -163,7 +197,9 @@ export function App() {
           {snapshot?.previewUrl ? (
             <iframe title="Project preview" src={snapshot.previewUrl} />
           ) : (
-            <div className="empty-preview">Preview server is not configured.</div>
+            <div className="empty-preview">
+              Preview server is not configured.
+            </div>
           )}
         </section>
       </section>
